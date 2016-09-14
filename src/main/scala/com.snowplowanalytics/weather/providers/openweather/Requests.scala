@@ -28,29 +28,38 @@ private[weather] object Requests {
     val parameters: Map[String, String]
 
     /**
-     * Construct URI for specific type of request and all other data
-     *
-     * @param appId API key
-     * @return URI object ready to be sent
-     */
+      * Construct URI for specific type of request and all other data
+      *
+      * @param appId API key
+      * @return URI object ready to be sent
+      */
     def constructQuery(appId: String): String = {
-      val end = endpoint.map(e => (Uri.Path.Empty / e / resource)).getOrElse(Uri.Path.Empty / resource)
+      val end = endpoint
+        .map(e => (Uri.Path.Empty / e / resource))
+        .getOrElse(Uri.Path.Empty / resource)
       val params = Query(parameters ++ Map("appid" -> appId))
-      Uri.Empty.withPath(Uri.Path.Empty / "data" / "2.5" ++ end)
-         .withQuery(params)
-         .toString
+      Uri.Empty
+        .withPath(Uri.Path.Empty / "data" / "2.5" ++ end)
+        .withQuery(params)
+        .toString
     }
   }
 
-  final case class OwmHistoryRequest(resource: String, parameters: Map[String, String]) extends OwmRequest {
+  final case class OwmHistoryRequest(resource: String,
+                                     parameters: Map[String, String])
+      extends OwmRequest {
     val endpoint = Some("history")
   }
 
-  final case class OwmForecastRequest(resource: String, parameters: Map[String, String]) extends OwmRequest {
+  final case class OwmForecastRequest(resource: String,
+                                      parameters: Map[String, String])
+      extends OwmRequest {
     val endpoint = Some("forecast")
   }
 
-  final case class OwmCurrentRequest(resource: String, parameters: Map[String, String]) extends OwmRequest {
+  final case class OwmCurrentRequest(resource: String,
+                                     parameters: Map[String, String])
+      extends OwmRequest {
     val endpoint = None
   }
 }

@@ -26,7 +26,8 @@ import Errors._
 import Responses._
 import Requests.OwmRequest
 
-class ExtractSpec extends Specification with DisjunctionMatchers { def is = s2"""
+class ExtractSpec extends Specification with DisjunctionMatchers {
+  def is = s2"""
 
   Extract case classes from OWM responses
 
@@ -47,37 +48,43 @@ class ExtractSpec extends Specification with DisjunctionMatchers { def is = s2""
   }
 
   def e1 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/history.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/history.json")).mkString)
     val weather = dummyClient.extractWeather[History](json)
     weather must be_\/-
   }
 
   def e2 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/history-empty.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/history-empty.json")).mkString)
     val weather = dummyClient.extractWeather[History](json)
     weather.map(_.list.length) must be_\/-(0)
   }
 
   def e3 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/current.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/current.json")).mkString)
     val weather = dummyClient.extractWeather[Current](json)
     weather.map(_.main.humidity) must be_\/-(62)
   }
 
   def e4 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/forecast.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/forecast.json")).mkString)
     val weather = dummyClient.extractWeather[Forecast](json)
     weather.map(_.cod) must be_\/-("200")
   }
 
   def e5 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/empty.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/empty.json")).mkString)
     val weather = dummyClient.extractWeather[History](json)
     weather.map(_.cod) must be_-\/
   }
 
   def e6 = {
-    val json = parseJson(Source.fromURL(getClass.getResource("/nodata.json")).mkString)
+    val json = parseJson(
+      Source.fromURL(getClass.getResource("/nodata.json")).mkString)
     val weather = dummyClient.extractWeather[History](json)
     weather.map(_.cod) must be_-\/(ErrorResponse(Some("404"), "no data"))
   }

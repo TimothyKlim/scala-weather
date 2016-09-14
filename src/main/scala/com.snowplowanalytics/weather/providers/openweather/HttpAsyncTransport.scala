@@ -27,16 +27,18 @@ import Errors.WeatherError
 import Requests.WeatherRequest
 
 /**
- * Basic trait responsible for receiving data via HTTP
- * Also supposed to be responsible for establishing HTTP connection
- */
+  * Basic trait responsible for receiving data via HTTP
+  * Also supposed to be responsible for establishing HTTP connection
+  */
 trait HttpAsyncTransport {
+
   /**
-   * Build request and send it to the server and get future response
-   *
-   * @param request helper for generating correct URI
-   * @param appId API key
-   * @return future either service-error or ready-to-process JSON
-   */
-  def getData(request: WeatherRequest, appId: String): Future[WeatherError \/ JValue]
+    * Build request and send it to the server and get future response
+    *
+    * @param request helper for generating correct URI
+    * @param appId API key
+    * @return future either service-error or ready-to-process JSON
+    */
+  def getData(request: WeatherRequest,
+              appId: String): Future[WeatherError \/ JValue]
 }

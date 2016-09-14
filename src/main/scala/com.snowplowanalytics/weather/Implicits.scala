@@ -19,13 +19,15 @@ import scala.language.implicitConversions
 import org.joda.time.DateTime
 
 object Implicits {
+
   /**
-   * Options as optional arguments
-   * See: http://stackoverflow.com/questions/4199393/are-options-and-named-default-arguments-like-oil-and-water-in-a-scala-api
-   */
+    * Options as optional arguments
+    * See: http://stackoverflow.com/questions/4199393/are-options-and-named-default-arguments-like-oil-and-water-in-a-scala-api
+    */
   class OptArg[T] private (val option: Option[T])
   object OptArg {
-    implicit def any2opt[T](t: T): OptArg[T] = new OptArg(Option(t)) // NOT Some(t)
+    implicit def any2opt[T](t: T): OptArg[T] =
+      new OptArg(Option(t)) // NOT Some(t)
     implicit def option2opt[T](o: Option[T]): OptArg[T] = new OptArg(o)
     implicit def opt2option[T](o: OptArg[T]): Option[T] = o.option
 
@@ -36,24 +38,25 @@ object Implicits {
       * @param d joda time containing all information
       * @return Unix epoch timestamp
       */
-    implicit def optDateToInt(d: DateTime): OptArg[Int] = Some((d.getMillis / 1000).toInt)
+    implicit def optDateToInt(d: DateTime): OptArg[Int] =
+      Some((d.getMillis / 1000).toInt)
   }
 
   /**
-   * Construct Map out of (k,v) pair where v is optional
-   *
-   * @param pair tuple with optional second element
-   * @return empty Map if v is None, Map(k -> v) otherwise
-   */
+    * Construct Map out of (k,v) pair where v is optional
+    *
+    * @param pair tuple with optional second element
+    * @return empty Map if v is None, Map(k -> v) otherwise
+    */
   implicit def pairToMap(pair: (String, Option[String])): Map[String, String] =
     pair._2.map(v => Map(pair._1 -> v)).getOrElse(Map.empty)
 
   /**
-   * Addition to `pairToMap` specified on Integers
-   *
-   * @param pair tuple with optional second element
-   * @return empty Map if v is None, Map(k -> v) otherwise
-   */
+    * Addition to `pairToMap` specified on Integers
+    *
+    * @param pair tuple with optional second element
+    * @return empty Map if v is None, Map(k -> v) otherwise
+    */
   implicit def pairIntToMap(pair: (String, OptArg[Int])): Map[String, String] =
     pair._2.map(v => Map(pair._1 -> v.toString)).getOrElse(Map.empty)
 }

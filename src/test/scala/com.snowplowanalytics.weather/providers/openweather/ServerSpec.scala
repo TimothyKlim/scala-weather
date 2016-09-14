@@ -19,7 +19,7 @@ import akka.actor.ActorSystem
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-import org.specs2.{ ScalaCheck, Specification }
+import org.specs2.{ScalaCheck, Specification}
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.specification.ExecutionEnvironment
@@ -34,15 +34,17 @@ object ServerSpec {
 }
 
 import ServerSpec._
+
 /**
- * Test case classes extraction from real server responses
- */
+  * Test case classes extraction from real server responses
+  */
 class ServerSpec
-  extends Specification
+    extends Specification
     with ScalaCheck
     with DisjunctionMatchers
     with ExecutionEnvironment
-    with WeatherGenerator { def is(implicit ee: ExecutionEnv) = skipAllIf(owmKey.isEmpty) ^ s2"""
+    with WeatherGenerator {
+  def is(implicit ee: ExecutionEnv) = skipAllIf(owmKey.isEmpty) ^ s2"""
 
     Test server responses for history requests by coordinates (it can take several minutes)
 
@@ -52,20 +54,26 @@ class ServerSpec
       sane error message for not found city $e4
   """
 
-  val conf = ConfigFactory.parseString("akka.log-dead-letters = 0, akka.daemonic = on")
+  val conf =
+    ConfigFactory.parseString("akka.log-dead-letters = 0, akka.daemonic = on")
 
   lazy val system = ActorSystem("test-actor-system", conf)
   val transportForCache = AkkaHttpTransport(system, "pro.openweathermap.org")
 
   def testCities(cities: Vector[Position]) = {
     val client = OwmAsyncClient(owmKey.get, transportForCache)
-    forAll(genPredefinedPosition(cities), genLastWeekTimeStamp) { (position: Position, timestamp: Timestamp) =>
-      val history = client.historyByCoords(position.latitude, position.longitude, timestamp, timestamp + 80000)
-      Await.result(history, 5 seconds) must be_\/-
+    forAll(genPredefinedPosition(cities), genLastWeekTimeStamp) {
+      (position: Position, timestamp: Timestamp) =>
+        val history = client.historyByCoords(position.latitude,
+                                             position.longitude,
+                                             timestamp,
+                                             timestamp + 80000)
+        Await.result(history, 5 seconds) must be_\/-
     }
   }
 
-  def e1 = testCities(TestData.bigAndAbnormalCities).set(maxSize = 5, minTestsOk = 5)
+  def e1 =
+    testCities(TestData.bigAndAbnormalCities).set(maxSize = 5, minTestsOk = 5)
 
   def e2 = testCities(TestData.randomCities).set(maxSize = 15, minTestsOk = 15)
 
@@ -73,15 +81,18 @@ class ServerSpec
     val client = OwmAsyncClient("INVALID-KEY", transportForCache)
     val result = client.historyById(1)
     Await.result(result, 5 seconds) must be_-\/.like {
-      case e: WeatherError => e.toString must beEqualTo("OpenWeatherMap AuthorizationError$ Check your API key")
+      case e: WeatherError =>
+        e.toString must beEqualTo(
+          "OpenWeatherMap AuthorizationError$ Check your API key")
     }
   }
 
   def e4 = {
     val client = OwmAsyncClient(owmKey.get, transportForCache)
-    val result = client.historyById(0, start=1015606302, end=1015609910)
+    val result = client.historyById(0, start = 1015606302, end = 1015609910)
     Await.result(result, 5 seconds) must be_-\/.like {
-      case e: WeatherError => e.toString must beEqualTo("OpenWeatherMap ErrorResponse no data")
+      case e: WeatherError =>
+        e.toString must beEqualTo("OpenWeatherMap ErrorResponse no data")
     }
   }
 }

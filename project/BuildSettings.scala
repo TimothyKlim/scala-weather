@@ -12,18 +12,42 @@
  */
 import sbt._
 import Keys._
+import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
 
 object BuildSettings {
 
   // Basic settings for our app
   lazy val basicSettings = Seq[Setting[_]](
-    organization          :=  "com.snowplowanalytics",
-    version               :=  "0.2.0",
-    description           :=  "High-performance Scala library for performing current and historical weather lookups ",
-    scalaVersion          :=  "2.10.5",
-    crossScalaVersions    :=  Seq("2.10.6", "2.11.7"),
-    scalacOptions         :=  Seq("-feature", "-deprecation", "-encoding", "utf8"),
-    resolvers             ++= Dependencies.resolutionRepos
+    organization := "com.snowplowanalytics",
+    version := "0.3.0",
+    description := "High-performance Scala library for performing current and historical weather lookups ",
+    scalaVersion := "2.11.8",
+    scalacOptions := Seq("-encoding",
+                         "UTF-8",
+                         "-target:jvm-1.8",
+                         "-unchecked",
+                         "-deprecation",
+                         "-feature",
+                         "-language:higherKinds",
+                         "-language:existentials",
+                         "-language:postfixOps",
+                         "-Xexperimental",
+                         "-Xlint",
+                         // "-Xfatal-warnings",
+                         "-Xfuture",
+                         "-Ybackend:GenBCode",
+                         "-Ydelambdafy:method",
+                         "-Yno-adapted-args",
+                         "-Yopt-warnings",
+                         "-Yopt:l:classpath",
+                         "-Yopt:unreachable-code" /*,
+                         "-Ywarn-dead-code",
+                         "-Ywarn-infer-any",
+                         "-Ywarn-numeric-widen",
+                         "-Ywarn-unused",
+                         "-Ywarn-unused-import",
+                         "-Ywarn-value-discard"*/ ),
+    resolvers ++= Dependencies.resolutionRepos
   )
 
   // Publish settings
@@ -31,14 +55,15 @@ object BuildSettings {
   lazy val publishSettings = Seq[Setting[_]](
     // Enables publishing to maven repo
     publishMavenStyle := true,
-
     publishTo <<= version { version =>
       val basePath = "target/repo/%s".format {
         if (version.trim.endsWith("SNAPSHOT")) "snapshots/" else "releases/"
       }
-      Some(Resolver.file("Local Maven repository", file(basePath)) transactional())
+      Some(
+        Resolver
+          .file("Local Maven repository", file(basePath)) transactional ())
     }
   )
 
-  lazy val buildSettings = basicSettings ++ publishSettings
+  lazy val buildSettings = basicSettings ++ reformatOnCompileSettings ++ publishSettings
 }

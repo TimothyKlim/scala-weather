@@ -27,58 +27,42 @@ object Dependencies {
 
   object V {
     // Java
-    val jodaTime      = "2.9.1"
-    val jodaConvert   = "1.8.1"
+    val jodaTime = "2.9.4"
+    val jodaConvert = "1.8.1"
 
     // Scala
-    val scalaz        = "7.0.6"
-    val json4s        = "3.2.11"
-    val akka          = "2.3.14"
-    val akkaStreams   = "2.0.2"
-
-    object collUtil {
-      val _210      = "6.3.4"
-      val _211      = "6.29.0"  // Should work on 2.10 too
-    }
+    val scalaz = "7.2.6"
+    val json4s = "3.4.0"
+    val akka = "2.4.10"
+    val collUtil = "6.37.0"
 
     // Tests
-    val mockito     = "2.0.31-beta"
-    val scalaCheck  = "1.12.5"
-    val specs2      = s"3.6.1-scalaz-$scalaz" // $scalaz is for binary-compatible 3.x.x
+    val mockito = "1.9.5"
+    val scalaCheck = "1.13.2"
+    val specs2 = "3.8.5"
   }
 
   object Libraries {
     // Java
-    val jodaTime     = "joda-time"                 % "joda-time"                    % V.jodaTime
-    val jodaConvert  = "org.joda"                  % "joda-convert"                 % V.jodaConvert
+    val jodaTime = "joda-time" % "joda-time" % V.jodaTime
+    val jodaConvert = "org.joda" % "joda-convert" % V.jodaConvert
 
     // Scala
-    val scalaz        = "org.scalaz"               %% "scalaz-core"                 % V.scalaz
-    val json4s        = "org.json4s"               %% "json4s-core"                 % V.json4s
-    val json4sJackson = "org.json4s"               %% "json4s-jackson"              % V.json4s
-    val json4sScalaz  = "org.json4s"               %% "json4s-scalaz"               % V.json4s
-    val akka          = "com.typesafe.akka"        %% "akka-actor"                  % V.akka
-    val akkaStreams   = "com.typesafe.akka"        %% "akka-stream-experimental"    % V.akkaStreams
-    val akkaHttpCore  = "com.typesafe.akka"        %% "akka-http-core-experimental" % V.akkaStreams
-    val akkaHttp      = "com.typesafe.akka"        %% "akka-http-experimental"      % V.akkaStreams
+    val scalaz = "org.scalaz" %% "scalaz-core" % V.scalaz
+    val json4s = "org.json4s" %% "json4s-core" % V.json4s
+    val json4sJackson = "org.json4s" %% "json4s-jackson" % V.json4s
+    val json4sScalaz = "org.json4s" %% "json4s-scalaz" % V.json4s
+    val akka = "com.typesafe.akka" %% "akka-actor" % V.akka
+    val akkaStreams = "com.typesafe.akka" %% "akka-stream-experimental" % V.akka
+    val akkaHttp = "com.typesafe.akka" %% "akka-http-experimental" % V.akka
 
-    object collUtil {
-      val _210      = "com.twitter"                %% "util-collection"             % V.collUtil._210
-      val _211      = "com.twitter"                %% "util-collection"             % V.collUtil._211
-    }
+    val collUtil = "com.twitter" %% "util-collection" % V.collUtil
 
     // Tests
-    val mockito         = "org.mockito"            % "mockito-core"        % V.mockito           % "test"
-    val specs2          = "org.specs2"             %% "specs2-core"        % V.specs2            % "test"
-    val specs2Mock      = "org.specs2"             %% "specs2-mock"        % V.specs2            % "test"
-    val specsScalaCheck = "org.specs2"             %% "specs2-scalacheck"  % V.specs2            % "test"
-    val scalaCheck      = "org.scalacheck"         %% "scalacheck"         % V.scalaCheck        % "test"
+    val mockito = "org.mockito" % "mockito-core" % V.mockito % "test"
+    val specs2 = "org.specs2" %% "specs2-core" % V.specs2 % "test"
+    val specs2Mock = "org.specs2" %% "specs2-mock" % V.specs2 % "test"
+    val specsScalaCheck = "org.specs2" %% "specs2-scalacheck" % V.specs2 % "test"
+    val scalaCheck = "org.scalacheck" %% "scalacheck" % V.scalaCheck % "test"
   }
-
-  def onVersion[A](all: Seq[A] = Seq(), on210: => Seq[A] = Seq(), on211: => Seq[A] = Seq()) =
-    scalaVersion(v => all ++ (if (v.contains("2.10.")) {
-      on210
-    } else {
-      on211
-    }))
 }

@@ -14,12 +14,13 @@ package com.snowplowanalytics.weather
 package providers.openweather
 
 /**
- * Module for various predefined values in OWM specification
- */
+  * Module for various predefined values in OWM specification
+  */
 object Api {
+
   /**
-   * Enums for measurements for history requests
-   */
+    * Enums for measurements for history requests
+    */
   object Measures extends Enumeration {
     val Tick = Value("tick")
     val Hour = Value("hour")

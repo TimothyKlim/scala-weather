@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2013-2015 Snowplow Analytics Ltd. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
@@ -20,15 +20,16 @@ object ScalaWeatherBuild extends Build {
 
   // Configure prompt to show current project
   override lazy val settings = super.settings :+ {
-    shellPrompt := { s => Project.extract(s).currentProject.id + " > " }
+    shellPrompt := { s =>
+      Project.extract(s).currentProject.id + " > "
+    }
   }
 
   // Define our project, with basic project information and library dependencies
   lazy val project = Project("scala-weather", file("."))
     .settings(buildSettings: _*)
     .settings(
-      libraryDependencies <++= Dependencies.onVersion(
-        all = Seq(
+      libraryDependencies ++= Seq(
         Libraries.jodaTime,
         Libraries.jodaConvert,
         Libraries.scalaz,
@@ -37,15 +38,12 @@ object ScalaWeatherBuild extends Build {
         Libraries.json4sScalaz,
         Libraries.akka,
         Libraries.akkaHttp,
-        Libraries.akkaHttpCore,
         Libraries.mockito,
         Libraries.specs2,
         Libraries.specs2Mock,
         Libraries.specsScalaCheck,
-        Libraries.scalaCheck
-        ),
-        on210 = Seq(Libraries.collUtil._210),
-        on211 = Seq(Libraries.collUtil._211)
+        Libraries.scalaCheck,
+        Libraries.collUtil
       )
     )
 }

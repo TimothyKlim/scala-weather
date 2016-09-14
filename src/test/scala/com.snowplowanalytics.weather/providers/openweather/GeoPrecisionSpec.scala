@@ -12,11 +12,12 @@
  */
 package com.snowplowanalytics.weather.providers.openweather
 
-import org.specs2.{ Specification, ScalaCheck }
+import org.specs2.{Specification, ScalaCheck}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.forAll
 
-class GeoPrecisionSpec extends Specification with ScalaCheck { def is = s2"""
+class GeoPrecisionSpec extends Specification with ScalaCheck {
+  def is = s2"""
 
   Float coordinates rounder specification
 
@@ -42,7 +43,6 @@ class GeoPrecisionSpec extends Specification with ScalaCheck { def is = s2"""
     throw exception for zero geoPrecision          $e11
                                                    """
 
-
   // We use here it because of Scala constructor order
   private[openweather] class CacheWithUnknownSize(
       val geoPrecision: Int,
@@ -63,16 +63,18 @@ class GeoPrecisionSpec extends Specification with ScalaCheck { def is = s2"""
   def e11 = new CacheWithUnknownSize(0) must throwA[IllegalArgumentException]
 
   // Rounding arbitrary floats
-  val sensibleFloat =         // we want omit big exponents
-    Arbitrary.arbitrary[Float] suchThat (f => (f > -180.0) && (f < 180.0) )
+  val sensibleFloat = // we want omit big exponents
+    Arbitrary.arbitrary[Float] suchThat (f => (f > -180.0) && (f < 180.0))
 
   def e8 = forAll(sensibleFloat) { f: Float =>
     rounderChecker1.roundCoordinate(f).toString must endWith(".0")
   }
   def e9 = forAll(sensibleFloat) { f: Float =>
-    rounderChecker2.roundCoordinate(f).toString must endWith(".0") or endWith(".5")
+    rounderChecker2.roundCoordinate(f).toString must endWith(".0") or endWith(
+      ".5")
   }
   def e10 = forAll(sensibleFloat) { f: Float =>
-    rounderChecker5.roundCoordinate(f).toString must endWith(".0") or endWith(".2") or endWith(".4") or endWith(".6") or endWith(".8")
+    rounderChecker5.roundCoordinate(f).toString must endWith(".0") or endWith(
+      ".2") or endWith(".4") or endWith(".6") or endWith(".8")
   }
 }

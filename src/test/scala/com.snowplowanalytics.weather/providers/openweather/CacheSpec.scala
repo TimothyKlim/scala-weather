@@ -24,11 +24,15 @@ import org.specs2.Specification
 import org.specs2.mock.Mockito
 import org.specs2.matcher.DisjunctionMatchers
 
-import Requests.{ OwmHistoryRequest => HR }
+import Requests.{OwmHistoryRequest => HR}
 import Errors.TimeoutError
 
 // Mock transport which returns predefined responses
-class CacheSpec(implicit val ec: ExecutionEnv) extends Specification with Mockito with DisjunctionMatchers { def is = s2"""
+class CacheSpec(implicit val ec: ExecutionEnv)
+    extends Specification
+    with Mockito
+    with DisjunctionMatchers {
+  def is = s2"""
 
   Test cache specification
 
@@ -40,10 +44,12 @@ class CacheSpec(implicit val ec: ExecutionEnv) extends Specification with Mockit
 
   """
 
-  val emptyHistoryResponse = \/.right(("cnt", 0) ~ ("cod", "200") ~ ("list", Nil))
+  val emptyHistoryResponse =
+    \/.right(("cnt", 0) ~ (("cod", "200")) ~ (("list", Nil)))
 
   def e1 = {
-    val transport = mock[AkkaHttpTransport].defaultReturn(Future.successful(emptyHistoryResponse))
+    val transport = mock[AkkaHttpTransport].defaultReturn(
+      Future.successful(emptyHistoryResponse))
     val client = OwmCacheClient("KEY", 2, 1, transport, 5)
     client.getCachedOrRequest(4.44f, 3.33f, 100)
     client.getCachedOrRequest(4.44f, 3.33f, 100)
@@ -53,8 +59,16 @@ class CacheSpec(implicit val ec: ExecutionEnv) extends Specification with Mockit
 
   def e2 = {
     val transport = mock[AkkaHttpTransport]
-    transport.getData(HR("city", Map("end" -> "86400", "lon" -> "3.33", "cnt" -> "24", "start" -> "0", "lat" -> "4.44")), "KEY")
-      .returns(Future.successful(\/.left(TimeoutError("java.util.concurrent.TimeoutException: Futures timed out after [1 second]"))))
+    transport
+      .getData(HR("city",
+                  Map("end" -> "86400",
+                      "lon" -> "3.33",
+                      "cnt" -> "24",
+                      "start" -> "0",
+                      "lat" -> "4.44")),
+               "KEY")
+      .returns(Future.successful(\/.left(TimeoutError(
+        "java.util.concurrent.TimeoutException: Futures timed out after [1 second]"))))
       .thenReturns(Future.successful(emptyHistoryResponse))
     val client = OwmCacheClient("KEY", 2, 1, transport, 5)
     client.getCachedOrRequest(4.44f, 3.33f, 100)
@@ -63,7 +77,8 @@ class CacheSpec(implicit val ec: ExecutionEnv) extends Specification with Mockit
   }
 
   def e3 = {
-    val transport = mock[AkkaHttpTransport].defaultReturn(Future.successful(emptyHistoryResponse))
+    val transport = mock[AkkaHttpTransport].defaultReturn(
+      Future.successful(emptyHistoryResponse))
     val client = OwmCacheClient("KEY", 2, 1, transport, 5)
     client.getCachedOrRequest(4.44f, 3.33f, 100)
     client.getCachedOrRequest(6.44f, 3.33f, 100)
@@ -73,20 +88,28 @@ class CacheSpec(implicit val ec: ExecutionEnv) extends Specification with Mockit
   }
 
   def e4 = {
-    val transport = mock[AkkaHttpTransport].defaultReturn(Future.successful(emptyHistoryResponse))
+    val transport = mock[AkkaHttpTransport].defaultReturn(
+      Future.successful(emptyHistoryResponse))
     val client = OwmCacheClient("KEY", 10, 1, transport, 5)
-    client.getCachedOrRequest(10.4f, 32.1f, 1447070440)   // Nov 9 12:00:40 2015 GMT
-    client.getCachedOrRequest(10.1f, 32.312f, 1447063607) // Nov 9 10:06:47 2015 GMT
-    client.getCachedOrRequest(10.2f, 32.4f, 1447096857)   // Nov 9 19:20:57 2015 GMT
+    client
+      .getCachedOrRequest(10.4f, 32.1f, 1447070440) // Nov 9 12:00:40 2015 GMT
+    client
+      .getCachedOrRequest(10.1f, 32.312f, 1447063607) // Nov 9 10:06:47 2015 GMT
+    client
+      .getCachedOrRequest(10.2f, 32.4f, 1447096857) // Nov 9 19:20:57 2015 GMT
     there.was(1.times(transport).getData(any[HR], anyString))
   }
 
   def e5 = {
-    val transport = mock[AkkaHttpTransport].defaultReturn(Future.successful(emptyHistoryResponse))
+    val transport = mock[AkkaHttpTransport].defaultReturn(
+      Future.successful(emptyHistoryResponse))
     val client = OwmCacheClient("KEY", 10, 2, transport, 5)
-    client.getCachedOrRequest(10.8f, 32.1f, 1447070440)   // Nov 9 12:00:40 2015 GMT
-    client.getCachedOrRequest(10.1f, 32.312f, 1447063607) // Nov 9 10:06:47 2015 GMT
-    client.getCachedOrRequest(10.2f, 32.4f, 1447096857)   // Nov 9 19:20:57 2015 GMT
+    client
+      .getCachedOrRequest(10.8f, 32.1f, 1447070440) // Nov 9 12:00:40 2015 GMT
+    client
+      .getCachedOrRequest(10.1f, 32.312f, 1447063607) // Nov 9 10:06:47 2015 GMT
+    client
+      .getCachedOrRequest(10.2f, 32.4f, 1447096857) // Nov 9 19:20:57 2015 GMT
     there.was(2.times(transport).getData(any[HR], anyString))
   }
 }

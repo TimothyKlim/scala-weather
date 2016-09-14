@@ -13,39 +13,44 @@
 package com.snowplowanalytics.weather.providers.openweather
 
 object Errors {
+
   /**
-   * Superclass for non-fatal exceptions that can be happen for weather fetching/processing
-   */
+    * Superclass for non-fatal exceptions that can be happen for weather fetching/processing
+    */
   sealed trait WeatherError {
     val message: String
-    override def toString = s"OpenWeatherMap ${this.getClass.getSimpleName} " + message
+    override def toString =
+      s"OpenWeatherMap ${this.getClass.getSimpleName} " + message
   }
 
   /**
-   * Connecting/receiving/etc timeout errors
-   */
-  case class TimeoutError(message: String) extends java.util.concurrent.TimeoutException(message) with WeatherError
+    * Connecting/receiving/etc timeout errors
+    */
+  case class TimeoutError(message: String)
+      extends java.util.concurrent.TimeoutException(message)
+      with WeatherError
 
   /**
-   * Invalid state/argument/response
-   */
+    * Invalid state/argument/response
+    */
   case class InternalError(message: String) extends WeatherError
 
   /**
-   * Response parsing error
-   */
+    * Response parsing error
+    */
   case class ParseError(message: String) extends WeatherError
 
   /**
-   * Common Auth error
-   * We could also use [[ErrorResponse]], but for some unauth cases OWM returns HTML page
-   */
+    * Common Auth error
+    * We could also use [[ErrorResponse]], but for some unauth cases OWM returns HTML page
+    */
   case object AuthorizationError extends WeatherError {
     val message = "Check your API key"
   }
 
   /**
-   * Error returned from weather provider, which can be extracted from JSON
-   */
-  case class ErrorResponse(cod: Option[String], message: String) extends WeatherError
+    * Error returned from weather provider, which can be extracted from JSON
+    */
+  case class ErrorResponse(cod: Option[String], message: String)
+      extends WeatherError
 }

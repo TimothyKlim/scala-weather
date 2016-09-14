@@ -26,31 +26,35 @@ import Responses._
 import Requests._
 
 /**
- * Asynchronous OpenWeatherMap client
- *
- * @param appId API key
- * @param transport HTTP client for send requests, receive responses
- */
-class OwmAsyncClient(appId: String, transport: HttpAsyncTransport) extends Client[AsyncWeather]  {
-  def receive[W <: OwmResponse: Manifest](request: OwmRequest): Future[WeatherError \/ W] = {
+  * Asynchronous OpenWeatherMap client
+  *
+  * @param appId API key
+  * @param transport HTTP client for send requests, receive responses
+  */
+class OwmAsyncClient(appId: String, transport: HttpAsyncTransport)
+    extends Client[AsyncWeather] {
+  def receive[W <: OwmResponse: Manifest](
+      request: OwmRequest): Future[WeatherError \/ W] = {
     val processedResponse = transport.getData(request, appId)
     processedResponse.map(_.flatMap(extractWeather[W]))
   }
 }
 
 /**
- * Companion object for async client
- */
+  * Companion object for async client
+  */
 object OwmAsyncClient {
+
   /**
-   * Create async client with key and optionally different API host
-   */
-  def apply(appId: String, host: String = "api.openweathermap.org"): OwmAsyncClient =
+    * Create async client with key and optionally different API host
+    */
+  def apply(appId: String,
+            host: String = "api.openweathermap.org"): OwmAsyncClient =
     new OwmAsyncClient(appId, AkkaHttpTransport(host))
 
   /**
-   * Create async client with key and optionally non-standard (mock) HTTP transport
-   */
+    * Create async client with key and optionally non-standard (mock) HTTP transport
+    */
   def apply(appId: String, transport: HttpAsyncTransport): OwmAsyncClient =
     new OwmAsyncClient(appId, transport)
 }
