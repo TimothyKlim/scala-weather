@@ -32,12 +32,12 @@ object Dependencies {
 
     // Scala
     val scalaz = "7.2.6"
-    val json4s = "3.4.0"
+    val json4s = "3.5.0-SNAPSHOT"
     val akka = "2.4.10"
     val collUtil = "6.37.0"
 
     // Tests
-    val mockito = "1.9.5"
+    val mockito = "1.10.19"
     val scalaCheck = "1.13.2"
     val specs2 = "3.8.5"
   }

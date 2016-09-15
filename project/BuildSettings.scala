@@ -19,7 +19,7 @@ object BuildSettings {
   // Basic settings for our app
   lazy val basicSettings = Seq[Setting[_]](
     organization := "com.snowplowanalytics",
-    version := "0.3.0",
+    version := "0.3.0-kt",
     description := "High-performance Scala library for performing current and historical weather lookups ",
     scalaVersion := "2.11.8",
     scalacOptions := Seq("-encoding",
